@@ -1,15 +1,120 @@
-<html>
-<title></title>
+﻿<html>
+<head>
+<title>HTML5 refl="noreferer" for non-HTML5 browsers</title>
+</head>
 <body>
-<h1>hello fag</h1>
-<h2>Note:</h2>
-<p>Please access this page in https<br />
-<script language="javascript" type="text/javascript">
+<h1>HTML5 ref="noreferer"</h1>
+
 <!--
+<h3>Note:</h3>
+<p>Please access this page in https
+<script language="javascript" type="text/javascript">
+
 var l=location.href.replace(/^http:/, 'https:');
 document.write('<a href="' +encodeURI(l)+ '">' +l+ '</a>');
+
+</script>
+</p>-->
+
+<h3>Introduction</h3>
+<p>The HTML5 standard introduced a <a href="http://diveintohtml5.org/semantics.html#link">new attribute</a> for anchors:
+
+<blockquote><a href=//www.whatwg.org/specs/web-apps/current-work/multipage/history.html#link-type-noreferrer>rel="noreferrer"</a> "indicates that no referrer information is to be leaked when following the link." No shipping browser currently supports this, but support <a href=//webkit.org/blog/907/webkit-nightlies-support-html5-noreferrer-link-relation/>was recently added to WebKit nightlies</a>, so it will eventually be showing up in Safari, Google Chrome, and other WebKit-based browsers.</blockquote>
+
+Now I made <code>rel="noreferer"</code> possible on pre-HTML5 browsers like IE6.
+
+The trick is to use HTTPS to do a 301 redirect, all browsers do not send <code>Referer</code> when switching https to http.</p>
+
+<p>This kind of habbit was practised on many web forums. People prefer to send links like _http://example.com and ttp://example.com or even hxxp://example.com on interwebs in order to avoid the Referer leak, so BBCode will not make these unrecognized links click-able.</p>
+
+<p>Possible other usecase for this app:
+<ul>
+  <li><a href="http://anonym.to/en.html">link to other sites anonymously</a>. This app provides better anonymity because it's exactly like a direct client visit.</li>
+  <li>Maybe bypass image anti-hotlink mechanism</li>
+</ul>
+</p>
+
+<h3>Install</h3>
+
+<p>Embedd this script on your webpage to enable <code>ref="noreferer"</code> for all browsers:
+<pre><code>
+var anchors = document.getElementsByTagName('a');
+for(var i=0;i&lt;anchors.length;i++){
+    try{
+        rel=anchors[i].getAttribute('rel').toString();
+        if(/noreferer/.test(rel))
+        { anchors[i].href="https://no-ref.appspot.com/"+anchors[i].href; }
+    }
+    catch(e)
+    { }
+    
+}
+</code></pre>
+</p>
+
+<h3>Playground for test</h3>
+
+<p>
+<a href="http://wearehugh.com/public/2009/04/check-referrer.cgi">Normal link</a><br />
+<a href="https://no-ref.appspot.com/http://wearehugh.com/public/2009/04/check-referrer.cgi">Link with this app hardcoded</a><br />
+<a rel="noreferer" href="http://wearehugh.com/public/2009/04/check-referrer.cgi"><code>rel="noreferer" attribute</code></a><br />
+</p>
+
+<!-- h3>Playground for testing</h3>
+<p>
+The test is simple, input an URL to images, it will be displayed on two boxes below:</p>
+
+<script language="javascript" type="text/javascript">
+
+var display=function()
+{
+    var byid = document.getElementById;
+    var w_ref =  byid('w_ref');
+    var wo_ref =  byid('wo_ref');
+    w_ref.src = byid('ref_url').value;
+    wo_ref.src = location.protocol + location.host + byid('ref_url').value;
+}
+
+</script>
+
+<input id="ref_url" type="text" value="http://hiphotos.baidu.com/%EC%BD%C1%AE%BD%A3%D0%F9/pic/item/8b6a0a45e9b75e0d879473bf.jpg" size="50" /><input type="submit" onclick="display()" />
+
+<br /><br />
+With referer(if you are browsing this page in http not https):<br />
+<img id="w_ref" style="border: solid 1px;" src="http://hiphotos.baidu.com/%EC%BD%C1%AE%BD%A3%D0%F9/pic/item/8b6a0a45e9b75e0d879473bf.jpg" width="500px" />
+
+<br /><br />
+Without referer using this app<br />
+<img id="wo_ref" style="border: solid 1px;" src="https://no-ref.appspot.com/http://hiphotos.baidu.com/%25%45%43%25%42%44%25%43%31%25%41%45%25%42%44%25%41%33%25%44%30%25%46%39/pic/item/04e43177402d3929b051b9b8.jpg" width="500px"/>
+-->
+
+<h3>Grab the source code:</h3>
+<p><a href="http://github.com/est/no-ref">http://github.com/est/no-ref</a></p>
+<p>I am relatively new to this git thing, contact me if anything is not right :)</p>
+<h3>Contact</h3>
+<p>electronixtar<script>document.write(String.fromCharCode(63+1));</script>G<script>document.write(String.fromCharCode(0x6D));</script>ail.com<br />
+my blog <a href="http://blog.est.im">http://blog.est.im</a>
+</p>
+<script language="javascript" type="text/javascript">
+<!--
+var anchors = document.getElementsByTagName('a');
+for(var i=0;i<anchors.length;i++)
+{
+    try
+    {
+        rel=anchors[i].getAttribute('rel').toString();
+        if(/noreferer/.test(rel))
+        {
+            anchors[i].href="https://no-ref.appspot.com/"+anchors[i].href;
+        }
+    }
+    catch(e)
+    {
+    
+    }
+    
+}
 -->
 </script>
-</p>
 </body>
 </html>

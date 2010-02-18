@@ -7,7 +7,7 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from urllib import unquote as url_unquote
-import re, os
+import re, os, logging
 
 class homepage(webapp.RequestHandler):
 
@@ -17,15 +17,19 @@ class homepage(webapp.RequestHandler):
 class gfw(webapp.RequestHandler):
     pass
 
+class hotlink_img(webapp.RequestHandler):
+    pass
+
 class jump(webapp.RequestHandler):
     
-    def get(self, url):
-        r=re.search(r'^http://(.*)$', self.request.url)
+    def get(self):
+        url=self.request.url
+        r=re.search(r'^http://(.*)$', url)
         is_dev = os.environ['SERVER_SOFTWARE'][:3]
         if r and is_dev!='Dev':
             self.redirect('https://'+r.groups()[0], permanent=True)
         else:
-            r=re.search(r'(http.?://.*$)', url_unquote(url))
+            r=re.search(r'http.*(http.?://.*$)', url_unquote(url))
             if r:
                 self.redirect(r.groups()[0], permanent=True)
             else:
@@ -38,7 +42,8 @@ def main():
         ('/', homepage),
         ('/gfw(.*)', gfw),
         # TODO: more features
-        ('(.*)', jump),
+        ('/hotlink_demo.jpg', hotlink_img),
+        ('.*', jump),
         ], debug=True)
     util.run_wsgi_app(application)
 
