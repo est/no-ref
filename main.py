@@ -1,36 +1,47 @@
-#!/usr/bin/env python
-#
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+﻿#!/usr/bin/env python
+#coding: utf-8
+
+
 
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
+from urllib import unquote as url_unquote
+import re, os
 
+class homepage(webapp.RequestHandler):
 
-class MainHandler(webapp.RequestHandler):
+    def get(self):
+        self.response.out.write(open('index.html').read())
 
-  def get(self):
-    self.response.out.write('Hello world!')
+class gfw(webapp.RequestHandler):
+    pass
+
+class jump(webapp.RequestHandler):
+    
+    def get(self, url):
+        r=re.search(r'^http://(.*)$', self.request.url)
+        is_dev = os.environ['SERVER_SOFTWARE'][:3]
+        if r and is_dev!='Dev':
+            self.redirect('https://'+r.groups()[0], permanent=True)
+        else:
+            r=re.search(r'(http.?://.*$)', url_unquote(url))
+            if r:
+                self.redirect(r.groups()[0], permanent=True)
+            else:
+                self.response.set_status(400)
+                self.response.out.write(url)
 
 
 def main():
-  application = webapp.WSGIApplication([('/', MainHandler)],
-                                       debug=True)
-  util.run_wsgi_app(application)
+    application = webapp.WSGIApplication([
+        ('/', homepage),
+        ('/gfw(.*)', gfw),
+        # TODO: more features
+        ('(.*)', jump),
+        ], debug=True)
+    util.run_wsgi_app(application)
 
 
 if __name__ == '__main__':
-  main()
+    main()
